@@ -35,6 +35,11 @@ function App() {
           'Identity': loginIdentity,
           'Login Time': new Date().toISOString()
         });
+        
+        // Log CleverTap ID
+        setTimeout(() => {
+          console.log('CleverTap ID:', clevertap.getCleverTapID());
+        }, 1000);
       }
     } else {
       alert('Invalid password! Use: password123');
