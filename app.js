@@ -6,41 +6,33 @@ function App() {
   const [loginPassword, setLoginPassword] = React.useState('');
   const [email, setEmail] = React.useState('');
 
+  const initCleverTap = () => {
+    try {
+      if (loginIdentity) {
+        if (typeof clevertap === "undefined") {
+          return;
+        }
+
+        clevertap.privacy.push({ optOut: false });
+        clevertap.privacy.push({ useIP: false });
+        clevertap.init('TEST-654-Z9R-646Z', 'eu1');
+        clevertap.spa = true;
+        clevertap.onUserLogin.push({
+          Site: {
+            Identity: loginIdentity,
+          },
+        });
+      }
+    } catch (error) {}
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     
     // Static password check
     if (loginPassword === 'password123') {
       setIsLoggedIn(true);
-      
-      // Initialize CleverTap after successful login
-      if (window.clevertap) {
-        clevertap.privacy.push({optOut: false});
-        clevertap.privacy.push({useIP: false});
-        clevertap.init('TEST-654-Z9R-646Z', 'eu1');
-        
-        // Push user profile with actual input values
-        clevertap.onUserLogin.push({
-          'Site': {
-            'Name': loginName,
-            'Identity': loginIdentity,
-            'Email': loginEmail
-          }
-        });
-        
-        // Track login event
-        clevertap.event.push('User Logged In', {
-          'Email': loginEmail,
-          'Name': loginName,
-          'Identity': loginIdentity,
-          'Login Time': new Date().toISOString()
-        });
-        
-        // Log CleverTap ID
-        setTimeout(() => {
-          console.log('CleverTap ID:', clevertap.getCleverTapID());
-        }, 1000);
-      }
+      initCleverTap();
     } else {
       alert('Invalid password! Use: password123');
     }
@@ -52,30 +44,16 @@ function App() {
     setLoginName('');
     setLoginIdentity('');
     setLoginPassword('');
-    
-    if (window.clevertap) {
-      clevertap.event.push('User Logged Out');
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (email && window.clevertap) {
-      clevertap.event.push('Newsletter Signup', {
-        'Email': email,
-        'Source': 'Landing Page'
-      });
-      alert('Thanks for subscribing!');
-      setEmail('');
-    }
+    alert('Thanks for subscribing!');
+    setEmail('');
   };
 
   const trackButtonClick = (buttonName) => {
-    if (window.clevertap) {
-      clevertap.event.push('Button Clicked', {
-        'Button Name': buttonName
-      });
-    }
+    console.log('Button clicked:', buttonName);
   };
 
   if (!isLoggedIn) {
