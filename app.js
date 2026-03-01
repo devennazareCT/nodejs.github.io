@@ -5,6 +5,14 @@ function App() {
   const [loginIdentity, setLoginIdentity] = React.useState('');
   const [loginPassword, setLoginPassword] = React.useState('');
   const [email, setEmail] = React.useState('');
+  const [apiData, setApiData] = React.useState(null);
+
+  React.useEffect(() => {
+    fetch('https://lokalisect.s3.amazonaws.com/Trading212/CleverTap/en.json')
+      .then(res => res.json())
+      .then(data => setApiData(data))
+      .catch(err => console.error(err));
+  }, []);
 
   const initCleverTap = () => {
     try {
@@ -127,6 +135,13 @@ function App() {
         <div className="container">
           <h1 className="hero-title">Build Something Amazing</h1>
           <p className="hero-subtitle">Transform your ideas into reality with our innovative solutions</p>
+          {apiData && (
+            <div style={{marginTop: '20px', padding: '20px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px'}}>
+              <pre style={{color: 'white', fontSize: '12px', overflow: 'auto', maxHeight: '200px'}}>
+                {JSON.stringify(apiData, null, 2)}
+              </pre>
+            </div>
+          )}
           <button className="btn-primary" onClick={() => trackButtonClick('Get Started')}>
             Get Started
           </button>
